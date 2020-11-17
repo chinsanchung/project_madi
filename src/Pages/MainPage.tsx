@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import Header from "../Components/Header/Header";
 import TopSide from "../Components/Main/TopSide";
+import MiddleSide from "../Components/Main/MiddleSide";
+
 
 const Container = styled.div`
   position: relative;
@@ -18,6 +20,7 @@ function MainPage() {
       <Header />
       <Container>
         <TopSide />
+        <MiddleSide />
       </Container>
     </>
   );

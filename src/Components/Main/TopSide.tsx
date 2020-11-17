@@ -5,7 +5,7 @@ import topVideoMp4 from "./../../styles/resources/mainTop.mp4";
 const TopWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 500px;
+  height: 600px;
   display: flex;
   justify-content: center;
   align-content: center;
