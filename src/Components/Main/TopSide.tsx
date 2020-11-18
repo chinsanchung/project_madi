@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import topVideoMp4 from "./../../styles/resources/mainTop.mp4";
+import topVideoMp4 from "./../../Styles/resources/mainTop.mp4";
 
 const TopWrapper = styled.div`
   position: relative;
