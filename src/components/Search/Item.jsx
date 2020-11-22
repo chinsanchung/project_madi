@@ -3,12 +3,8 @@ import styled from "styled-components";
 
 const Container = styled.div``;
 
-interface SearchBarProps {
-  searchSize: "string";
-}
-
-const SearchBar = ({ searchSize }: SearchBarProps) => {
+const Item = () => {
   return <Container></Container>;
 };
 
-export default SearchBar;
+export default Item;

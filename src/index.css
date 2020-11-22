@@ -9,7 +9,7 @@ body {
 
 @font-face {
   font-family: VeganStyle;
-  src: url("./Styles/fonts/VeganStyle.ttf") format("woff");
+  src: url("./styles/fonts/VeganStyle.ttf") format("woff");
 }
 /* 출처 https://m.blog.naver.com/PostView.nhn?blogId=hisdea&logNo=221241909650&proxyReferer=https:%2F%2Fwww.google.com%2F */
 @font-face {

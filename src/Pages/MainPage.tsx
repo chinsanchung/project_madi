@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import Header from "../Components/Header/Header";
-import TopSide from "../Components/Main/TopSide";
-import MiddleSide from "../Components/Main/MiddleSide";
-
+import Header from "../components/Header/Header";
+import TopSide from "../components/Main/TopSide";
+import MiddleSide from "../components/Main/MiddleSide";
 
 const Container = styled.div`
   position: relative;

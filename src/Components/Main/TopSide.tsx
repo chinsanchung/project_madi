@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import topVideoMp4 from "./../../Styles/resources/mainTop.mp4";
+import topVideoMp4 from "./../../styles/resources/mainTop.mp4";
 
 const TopWrapper = styled.div`
   position: relative;
@@ -57,7 +57,7 @@ function TopSide() {
         loop={true}
         muted={true}
       >
-        <source src={topVideoMp4} type="video/mp4" />
+        {/* <source src={topVideoMp4} type="video/mp4" /> */}
       </TopVideoWrapper>
     </TopWrapper>
   );
