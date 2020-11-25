@@ -12,6 +12,12 @@
       "coverage/lcov-report/*.js"
     ]
   },
+  "baseUrl": "src",
+  "paths": {
+    "@pages/*": ["./pages/*"],
+    "@components/*": ["./components/*"],
+    "@assets/*": ["./assets/*"]
+  },
   "rules": {
     "import-name": false,
     "interface-name": false,

@@ -1,14 +1,21 @@
 import React from "react";
-import { Route, Switch, BrowserRouter } from "react-router-dom";
-import MainPage from "./pages/MainPage";
+import CertificationPage from "@pages/CertificationPage";
+
+// declare global {
+//   interface Window {
+//     IMP: any;
+//     Kakao: any;
+//   }
+// }
 
 function App() {
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route path="/" component={MainPage} />
-      </Switch>
-    </BrowserRouter>
+    <>
+      <div style={{ width: 100, height: 100, backgroundColor: "blue" }}>
+        <h1 style={{ color: "white" }}>TEST</h1>
+      </div>
+      <CertificationPage />
+    </>
   );
 }
 
