@@ -1,34 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["es2015", "es6", "esnext", "dom"],
-    "allowJs": true,
-    "sourceMap": true,
-    "outDir": "dist",
-    "keyofStringsOnly": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
     "module": "commonjs",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": false,
-    "jsx": "react",
-    "baseUrl": "src",
-    "paths": {
-      "@types/*": ["./@types/*"],
-      "@core/*": ["./core/*"],
-      "@controller/*": ["./controller/*"],
-      "@model/*": ["./model/*"],
-      "@router/*": ["./router/*"],
-      "@util/*": ["./util/*"]
-    },
-    "typeRoots": ["./node_modules/@types", "./src/@types"]
-  },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true
+  }
 }
