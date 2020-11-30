@@ -7,13 +7,9 @@ export type UserDocument = User & Document;
 
 @Schema()
 export class User {
-  @Prop()
-  serialNumber: number;
-  @Prop()
-  name: string;
-  @Prop()
+  @Prop({ type: String, required: true })
   email: string;
-  @Prop()
+  @Prop({ type: String, required: true })
   password: string;
 }
 

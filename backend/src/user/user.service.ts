@@ -12,7 +12,7 @@ import Log from './../util/debugger';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('users') private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async getOne(id: string): Promise<User> {
     try {

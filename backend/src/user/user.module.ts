@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schema/user.schema';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
@@ -7,7 +7,9 @@ import { UserController } from './user.controller';
 // const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'users', schema: UserSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+  ],
   controllers: [UserController],
   providers: [UserService],
 })
