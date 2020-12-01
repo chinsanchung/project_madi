@@ -27,7 +27,9 @@ const RightButton = styled.button`
 
 function Header() {
   const router = useRouter();
-
+  const goToLoginPage = useCallback(() => {
+    router.push("/login");
+  }, []);
   const goToJoinPage = useCallback(() => {
     router.push("/join");
   }, []);
@@ -36,7 +38,7 @@ function Header() {
     <Container>
       <Logo>madi</Logo>
       <RightButtonWrapper>
-        <RightButton>로그인</RightButton>
+        <RightButton onClick={goToLoginPage}>로그인</RightButton>
         <RightButton onClick={goToJoinPage}>회원가입</RightButton>
       </RightButtonWrapper>
     </Container>

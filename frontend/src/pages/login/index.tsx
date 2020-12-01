@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { Formik, Form, ErrorMessage } from "formik";
@@ -64,56 +64,43 @@ const ErrorDiv = styled.div`
   color: red;
   margin-top: 0.25rem;
 `;
-interface joinProps {
+
+interface loginProps {
   email: string;
   password: string;
-  passwordConfirmation: string;
 }
-const initialValues: joinProps = {
-  email: "",
-  password: "",
-  passwordConfirmation: "",
-};
+const initialValue: loginProps = { email: "", password: "" };
 
-function Join() {
+function Login() {
   const router = useRouter();
   const validationObj = useMemo(() => {
     return {
-      email: Yup.string()
-        .email("이메일 양식에 맞춰주세요")
-        .required("Required"),
-      password: Yup.string()
-        .min(7, "7글자 이상 입력해주세요")
-        .max(10, "10글자 이하로 입력해주세요")
-        .required("Required"),
-      passwordConfirmation: Yup.string()
-        .min(7, "7글자 이상 입력해주세요")
-        .max(10, "10글자 이하로 입력해주세요")
-        .required("Required")
-        .oneOf([Yup.ref("password"), ""], "비밀번호가 서로 일치하지 않습니다."),
+      email: Yup.string().required("이메일을 입력해주세요"),
+      password: Yup.string().required("비밀번호를 입력해주세요"),
     };
   }, []);
 
-  const postJoin = useCallback(async (values: joinProps) => {
-    const bodyObject = { email: values.email, password: values.password };
-
+  const postLogin = useCallback(async (values: loginProps) => {
     try {
-      await Axios.post("http://localhost:5000/api/user/join", bodyObject);
-      // Swal.fire().then(res => )
+      const response = await Axios.post(
+        "http://localhost:5000/api/user/login",
+        values,
+      );
+      console.log("response", response.data);
     } catch (error) {
-      console.log("error", error);
+      console.log("login error", error.response.data);
     }
   }, []);
+
   return (
     <Container>
       <MainWrapper>
-        <Title>회원가입</Title>
+        <Title>로그인</Title>
         <Formik
-          initialValues={initialValues}
+          initialValues={initialValue}
           validationSchema={Yup.object(validationObj)}
           onSubmit={async (values, actions) => {
-            // console.log("values: ", values, "actions", actions);
-            await postJoin(values);
+            await postLogin(values);
           }}
         >
           {(props) => (
@@ -150,25 +137,10 @@ function Join() {
                       </ErrorDiv>
                     )}
                   />
-                  <Label htmlFor="passwordConfirmation">비밀번호 재확인</Label>
-                  <Input
-                    type="password"
-                    id="passwordConfirmation"
-                    value={props.values.passwordConfirmation}
-                    onChange={props.handleChange}
-                  />
-                  <ErrorMessage
-                    name="passwordConfirmation"
-                    render={(msg) => (
-                      <ErrorDiv>
-                        <span>{msg}</span>
-                      </ErrorDiv>
-                    )}
-                  />
                 </Form>
               </FormWrapper>
               <SubmitButton type="submit" onClick={() => props.handleSubmit()}>
-                회원가입
+                로그인
               </SubmitButton>
             </>
           )}
@@ -178,4 +150,4 @@ function Join() {
   );
 }
 
-export default Join;
+export default Login;

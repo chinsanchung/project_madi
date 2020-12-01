@@ -11,7 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 
-@Controller('recipe')
+@Controller('api/recipe')
 export class RecipeController {
   // nest 는 import 가 아니라 constructor 로 서비스 요청
   constructor(private readonly recipeService: RecipeService) {}
