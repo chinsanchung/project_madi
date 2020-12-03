@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import { Formik, Form, ErrorMessage } from "formik";
+import { Formik, Form, ErrorMessage, Field } from "formik";
 import * as Yup from "yup";
-import Axios from "axios";
+import axios from "axios";
 import Swal from "sweetalert2";
+import { useContextDispatch } from "@src/store";
 
 const Container = styled.div`
   position: relative;
@@ -73,6 +74,8 @@ const initialValue: loginProps = { email: "", password: "" };
 
 function Login() {
   const router = useRouter();
+  const dispatch = useContextDispatch();
+
   const validationObj = useMemo(() => {
     return {
       email: Yup.string().required("이메일을 입력해주세요"),
@@ -82,13 +85,17 @@ function Login() {
 
   const postLogin = useCallback(async (values: loginProps) => {
     try {
-      const response = await Axios.post(
-        "http://localhost:5000/api/user/login",
-        values,
-      );
+      const response = await axios.post("/auth/login", values, {
+        withCredentials: true,
+      });
       console.log("response", response.data);
+
+      axios.defaults.headers.common["Authorization"] = response.data;
+      dispatch({ type: "LOGIN" });
+
+      router.push("/");
     } catch (error) {
-      console.log("login error", error.response.data);
+      console.log("login error", error);
     }
   }, []);
 
@@ -108,12 +115,7 @@ function Login() {
               <FormWrapper>
                 <Form style={{ width: "100%" }}>
                   <Label htmlFor="email">이메일</Label>
-                  <Input
-                    type="text"
-                    id="email"
-                    value={props.values.email}
-                    onChange={props.handleChange}
-                  />
+                  <Field type="text" name="email" as={Input} />
                   <ErrorMessage
                     name="email"
                     render={(msg) => (
@@ -123,12 +125,7 @@ function Login() {
                     )}
                   />
                   <Label htmlFor="password">비밀번호</Label>
-                  <Input
-                    type="password"
-                    id="password"
-                    value={props.values.password}
-                    onChange={props.handleChange}
-                  />
+                  <Field type="text" name="password" as={Input} />
                   <ErrorMessage
                     name="password"
                     render={(msg) => (

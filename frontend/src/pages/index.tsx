@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useCallback } from "react";
+import axios from "axios";
 import styled from "styled-components";
-import Header from "@components/Header";
+import { useRouter } from "next/router";
+import MainLayout from "@src/components/layout/MainLayout";
+import { useContextState } from "@src/store";
 
 const Container = styled.div`
   position: relative;
@@ -8,10 +11,31 @@ const Container = styled.div`
 `;
 
 function MainPage() {
+  const router = useRouter();
+  const state = useContextState();
+
+  const testBtn = useCallback(async () => {
+    try {
+      const response = await axios.get("/auth/valid", {
+        withCredentials: true,
+      });
+      console.log("resp", response.data);
+    } catch (error) {
+      // error.response 로 전체 확인
+      console.log("auth error", error?.response.status);
+    }
+  }, []);
+  const goToPostPage = useCallback(() => {
+    router.push("/posts");
+  }, []);
+
   return (
-    <Container>
-      <Header />
-    </Container>
+    <MainLayout>
+      <h1>메인 화면</h1>
+      <button onClick={testBtn}>토큰 일치여부 확인</button>
+      <button onClick={() => console.log("state?", state)}>context</button>
+      <button onClick={goToPostPage}>글 목록</button>
+    </MainLayout>
   );
 }
 

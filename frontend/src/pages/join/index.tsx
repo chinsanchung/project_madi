@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
-import { Formik, Form, ErrorMessage } from "formik";
+import { Formik, Form, ErrorMessage, Field } from "formik";
 import * as Yup from "yup";
-import Axios from "axios";
+import axios from "axios";
 import Swal from "sweetalert2";
 
 const Container = styled.div`
@@ -42,6 +42,27 @@ const Input = styled.input`
   padding-top: 10px;
   padding-bottom: 10px;
 `;
+const InputWithButton = styled.input`
+  display: inline-block;
+  width: 80%;
+  font-size: 15px;
+  box-sizing: border-box;
+  padding-left: 14px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: solid 1px #dadada;
+`;
+const InputSideButton = styled.a`
+  width: 100px;
+  height: 39px;
+  box-sizing: border-box;
+  padding: 10px 15px;
+  margin-left: 10px;
+  color: #fff;
+  border: solid 1px rgba(0, 0, 0, 0.08);
+  background-color: #03c75a;
+  cursor: pointer;
+`;
 const SubmitButton = styled.button`
   background-color: #e49582;
   align-self: center;
@@ -66,11 +87,13 @@ const ErrorDiv = styled.div`
 `;
 interface joinProps {
   email: string;
+  nickName: string;
   password: string;
   passwordConfirmation: string;
 }
 const initialValues: joinProps = {
   email: "",
+  nickName: "",
   password: "",
   passwordConfirmation: "",
 };
@@ -81,24 +104,29 @@ function Join() {
     return {
       email: Yup.string()
         .email("이메일 양식에 맞춰주세요")
-        .required("Required"),
+        .required("필수 정보입니다."),
+      nickName: Yup.string().required("필수 정보입니다."),
       password: Yup.string()
         .min(7, "7글자 이상 입력해주세요")
         .max(10, "10글자 이하로 입력해주세요")
-        .required("Required"),
+        .required("필수 정보입니다."),
       passwordConfirmation: Yup.string()
         .min(7, "7글자 이상 입력해주세요")
         .max(10, "10글자 이하로 입력해주세요")
-        .required("Required")
+        .required("필수 정보입니다.")
         .oneOf([Yup.ref("password"), ""], "비밀번호가 서로 일치하지 않습니다."),
     };
   }, []);
 
   const postJoin = useCallback(async (values: joinProps) => {
-    const bodyObject = { email: values.email, password: values.password };
+    const bodyObject = {
+      email: values.email,
+      nickName: values.nickName,
+      password: values.password,
+    };
 
     try {
-      await Axios.post("http://localhost:5000/api/user/join", bodyObject);
+      await axios.post("/user", bodyObject);
       // Swal.fire().then(res => )
     } catch (error) {
       console.log("error", error);
@@ -111,8 +139,8 @@ function Join() {
         <Formik
           initialValues={initialValues}
           validationSchema={Yup.object(validationObj)}
+          validateOnChange={false}
           onSubmit={async (values, actions) => {
-            // console.log("values: ", values, "actions", actions);
             await postJoin(values);
           }}
         >
@@ -120,51 +148,74 @@ function Join() {
             <>
               <FormWrapper>
                 <Form style={{ width: "100%" }}>
-                  <Label htmlFor="email">이메일</Label>
-                  <Input
-                    type="text"
-                    id="email"
-                    value={props.values.email}
-                    onChange={props.handleChange}
-                  />
-                  <ErrorMessage
-                    name="email"
-                    render={(msg) => (
-                      <ErrorDiv>
-                        <span>{msg}</span>
-                      </ErrorDiv>
-                    )}
-                  />
-                  <Label htmlFor="password">비밀번호</Label>
-                  <Input
-                    type="password"
-                    id="password"
-                    value={props.values.password}
-                    onChange={props.handleChange}
-                  />
-                  <ErrorMessage
-                    name="password"
-                    render={(msg) => (
-                      <ErrorDiv>
-                        <span>{msg}</span>
-                      </ErrorDiv>
-                    )}
-                  />
-                  <Label htmlFor="passwordConfirmation">비밀번호 재확인</Label>
-                  <Input
-                    type="password"
-                    id="passwordConfirmation"
-                    value={props.values.passwordConfirmation}
-                    onChange={props.handleChange}
-                  />
-                  <ErrorMessage
-                    name="passwordConfirmation"
-                    render={(msg) => (
-                      <ErrorDiv>
-                        <span>{msg}</span>
-                      </ErrorDiv>
-                    )}
-                  />
+                  <div className="row_group">
+                    <h3>이메일</h3>
+                    <div
+                      className="input-btn-area"
+                      style={{ position: "relative" }}
+                    >
+                      <Field name="email" as={Input} />
+                    </div>
+                    <ErrorMessage
+                      name="email"
+                      render={(msg) => (
+                        <ErrorDiv>
+                          <span>{msg}</span>
+                        </ErrorDiv>
+                      )}
+                    />
+                  </div>
+                  <div className="row_group">
+                    <h3>닉네임</h3>
+                    <div
+                      className="input-btn-area"
+                      style={{ position: "relative" }}
+                    >
+                      <Field name="nickName" as={Input} />
+                    </div>
+                    <ErrorMessage
+                      name="nickName"
+                      render={(msg) => (
+                        <ErrorDiv>
+                          <span>{msg}</span>
+                        </ErrorDiv>
+                      )}
+                    />
+                  </div>
+                  <div className="row_group">
+                    <h3>비밀번호</h3>
+                    <div
+                      className="input-btn-area"
+                      style={{ position: "relative" }}
+                    >
+                      <Field name="password" as={Input} />
+                    </div>
+                    <ErrorMessage
+                      name="password"
+                      render={(msg) => (
+                        <ErrorDiv>
+                          <span>{msg}</span>
+                        </ErrorDiv>
+                      )}
+                    />
+                  </div>
+                  <div className="row_group">
+                    <h3>비밀번호 재확인</h3>
+                    <div
+                      className="input-btn-area"
+                      style={{ position: "relative" }}
+                    >
+                      <Field name="passwordConfirmation" as={Input} />
+                    </div>
+                    <ErrorMessage
+                      name="passwordConfirmation"
+                      render={(msg) => (
+                        <ErrorDiv>
+                          <span>{msg}</span>
+                        </ErrorDiv>
+                      )}
+                    />
+                  </div>
                 </Form>
               </FormWrapper>
               <SubmitButton type="submit" onClick={() => props.handleSubmit()}>

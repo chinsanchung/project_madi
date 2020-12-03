@@ -1,12 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "es2015",
-      "es6",
-      "esnext",
-      "dom"
-    ],
+    "lib": ["es2015", "es6", "esnext", "dom"],
     "allowJs": true,
     "sourceMap": true,
     "outDir": "dist",
@@ -23,27 +18,13 @@
     "isolatedModules": true,
     "noEmit": false,
     "jsx": "preserve",
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@pages/*": [
-        "./pages/*"
-      ],
-      "@components/*": [
-        "./components/*"
-      ],
-      "@assets/*": [
-        "./assets/*"
-      ]
+      "@src/*": ["src/*"],
+      "@public/*": ["public/*"]
     },
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/@types"
-    ]
+    "typeRoots": ["./node_modules/@types", "./src/@types"]
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

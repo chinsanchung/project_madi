@@ -1,6 +1,12 @@
 import React, { useCallback } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { useRouter } from "next/router";
+import { useContextDispatch, useContextState } from "@src/store";
+import axios from "axios";
+
+interface ILogout {
+  readonly isLogin: boolean;
+}
 
 const Container = styled.div`
   max-width: 960px;
@@ -9,37 +15,64 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-const Logo = styled.div`
-  font-family: VeganStyle;
-  font-size: 30px;
-  color: #fff;
-`;
 const RightButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
 `;
-const RightButton = styled.button`
+const ButtonIfNotLogined = styled.button<ILogout>`
   box-sizing: border-box;
   font-size: 17px;
   padding: 10px 20px;
+  ${(props) =>
+    props.isLogin === true &&
+    css`
+      display: none;
+    `}
+`;
+const ButtonIfLogined = styled.button<ILogout>`
+  box-sizing: border-box;
+  font-size: 17px;
+  padding: 10px 20px;
+  ${(props) =>
+    props.isLogin === false &&
+    css`
+      display: none;
+    `}
 `;
 
 function Header() {
+  const state = useContextState();
+  const dispatch = useContextDispatch();
   const router = useRouter();
+
   const goToLoginPage = useCallback(() => {
     router.push("/login");
   }, []);
   const goToJoinPage = useCallback(() => {
     router.push("/join");
   }, []);
+  const onLogOut = useCallback(async () => {
+    try {
+      await axios.delete("/auth/token", {
+        withCredentials: true,
+      });
+      dispatch({ type: "LOGOUT" });
+    } catch (error) {}
+  }, []);
 
   return (
     <Container>
-      <Logo>madi</Logo>
       <RightButtonWrapper>
-        <RightButton onClick={goToLoginPage}>로그인</RightButton>
-        <RightButton onClick={goToJoinPage}>회원가입</RightButton>
+        <ButtonIfNotLogined isLogin={state.isLogin} onClick={goToLoginPage}>
+          로그인
+        </ButtonIfNotLogined>
+        <ButtonIfNotLogined isLogin={state.isLogin} onClick={goToJoinPage}>
+          회원가입
+        </ButtonIfNotLogined>
+        <ButtonIfLogined onClick={onLogOut} isLogin={state.isLogin}>
+          로그아웃
+        </ButtonIfLogined>
       </RightButtonWrapper>
     </Container>
   );
