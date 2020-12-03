@@ -1,15 +1,15 @@
-{
+{ 
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
+    "target": "es5",
     "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
     "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true
-  }
+    "outDir": "dist",
+    "strict": false,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "typeRoots":["./node_modules/@types", "./src/@types"],
+    "experimentalDecorators": true,
+  },
+  "exclude": ["node_modules","__test__","public"]
 }
