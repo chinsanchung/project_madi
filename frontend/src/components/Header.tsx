@@ -52,13 +52,19 @@ function Header() {
   const goToJoinPage = useCallback(() => {
     router.push("/join");
   }, []);
+  const goToMyPage = useCallback(() => {
+    router.push("/mypage");
+  }, []);
   const onLogOut = useCallback(async () => {
     try {
       await axios.delete("/auth/token", {
         withCredentials: true,
       });
       dispatch({ type: "LOGOUT" });
-    } catch (error) {}
+      axios.defaults.headers.common["Authorization"] = "";
+    } catch (error) {
+      console.log("로그아웃 에러", error);
+    }
   }, []);
 
   return (
@@ -70,7 +76,10 @@ function Header() {
         <ButtonIfNotLogined isLogin={state.isLogin} onClick={goToJoinPage}>
           회원가입
         </ButtonIfNotLogined>
-        <ButtonIfLogined onClick={onLogOut} isLogin={state.isLogin}>
+        <ButtonIfLogined isLogin={state.isLogin} onClick={goToMyPage}>
+          내정보
+        </ButtonIfLogined>
+        <ButtonIfLogined isLogin={state.isLogin} onClick={onLogOut}>
           로그아웃
         </ButtonIfLogined>
       </RightButtonWrapper>

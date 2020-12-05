@@ -52,9 +52,9 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
     try {
       const response = await axios.post("/auth/refresh");
       console.log("getAccessToken: ", response.data);
-      dispatch({ type: "LOGIN" });
       axios.defaults.headers.common["Authorization"] = response.data;
     } catch (error) {
+      dispatch({ type: "LOGOUT" });
       console.log("getAccessToken error", error);
     }
   }, []);
@@ -70,6 +70,7 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
     axios.defaults.baseURL = baseUrl;
 
     if (token !== undefined && authorization === undefined) {
+      dispatch({ type: "LOGIN" });
       // 새로고침
       getAccessToken();
     }

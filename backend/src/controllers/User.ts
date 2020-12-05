@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import Log from "@src/utils/logger";
 import UserModel from "@src/models/User";
+import JwtService from "@src/core/Jwt";
+
+const jwtService = new JwtService();
 
 export default class UserController {
   async getOne(req: Request, res: Response) {
@@ -14,7 +17,7 @@ export default class UserController {
       res.end();
     } catch (error) {
       Log.errorMessage(error);
-      // console.log("getOne error", error);
+      Log.errorMessage("getOne error");
       res.status(404).send(error);
       res.end();
     }
@@ -24,13 +27,14 @@ export default class UserController {
     try {
       const user = new UserModel({ ...req.body, updatedAt: Date.now() });
       await user.save();
-      console.log("postjoin", user);
+      Log.message("start postJoin");
 
       res.status(200).send("success");
       res.end();
     } catch (error) {
+      Log.errorMessage("postJoin error");
       Log.errorMessage(error);
-      // console.log("postJoin error ", error);
+
       res.status(404).send(error);
       res.end();
     }
@@ -39,11 +43,10 @@ export default class UserController {
   async checkDuplicate(req: Request, res: Response) {
     try {
       const { type, value } = req.body;
-      Log.message("req.body");
+      Log.message(`req.body: ${type}, ${value}`);
 
       const response = await UserModel.findOne({
         [type]: value,
-        activate: true,
       })
         .select("_id")
         .lean();
@@ -52,18 +55,36 @@ export default class UserController {
 
       if (response === null) {
         Log.message("존재하지 않는 회원");
-        res.send("unique");
+        res.json({ isDuplicate: false });
         res.end();
       } else {
         Log.message("존재하는 회원");
-        res.send("duplicate");
+        res.json({ isDuplicate: true });
         res.end();
       }
     } catch (error) {
       Log.errorMessage("중복확인 에러");
       Log.errorMessage(error);
-      res.sendStatus(500);
+      res.status(403).send("중복확인 에러");
       res.end();
+    }
+  }
+
+  async getMyInfo(req: Request, res: Response) {
+    try {
+      const accessToken = req.headers.authorization;
+      const userInfo = jwtService.decodeToken(accessToken);
+
+      const response = await UserModel.findById(userInfo._id);
+      // Log.message(response);
+
+      res.json(response);
+
+      res.end();
+    } catch (error) {
+      Log.errorMessage("getMyInfo error");
+      Log.errorMessage(error);
+      res.status(403).send("에러가 발생했습니다.");
     }
   }
 }

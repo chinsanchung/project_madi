@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import axios from "axios";
+import cookie from "react-cookies";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import MainLayout from "@src/components/layout/MainLayout";
@@ -15,15 +16,18 @@ function MainPage() {
   const state = useContextState();
 
   const testBtn = useCallback(async () => {
-    try {
-      const response = await axios.get("/auth/valid", {
-        withCredentials: true,
-      });
-      console.log("resp", response.data);
-    } catch (error) {
-      // error.response 로 전체 확인
-      console.log("auth error", error?.response.status);
-    }
+    const token = cookie.load("rNADACI4MAoJb5C");
+    if (token) {
+      try {
+        const response = await axios.get("/auth/valid", {
+          withCredentials: true,
+        });
+        console.log("resp", response.data);
+      } catch (error) {
+        // error.response 로 전체 확인
+        console.log("auth error", error?.response);
+      }
+    } else alert("로그인 안한 상황");
   }, []);
   const goToPostPage = useCallback(() => {
     router.push("/posts");

@@ -1,11 +1,15 @@
 import { Router } from "express";
 import UserController from "@src/controllers/User";
+import AuthController from "@src/controllers/Auth";
 
-const controller = new UserController();
+const User = new UserController();
+const Auth = new AuthController();
 const router = Router();
 
-router.get("/:id", controller.getOne);
-router.post("/duplicate", controller.checkDuplicate);
-router.post("/", controller.postJoin);
+router.get("/my-info", User.getMyInfo);
+router.post("/duplicate", User.checkDuplicate);
+router.post("/", User.postJoin);
+
+router.get("/:id", User.getOne);
 
 export default router;

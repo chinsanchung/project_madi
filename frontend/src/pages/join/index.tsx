@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { Formik, Form, ErrorMessage, Field } from "formik";
@@ -85,20 +85,30 @@ const ErrorDiv = styled.div`
   color: red;
   margin-top: 0.25rem;
 `;
-interface joinProps {
+interface IJoin {
   email: string;
   nickName: string;
   password: string;
   passwordConfirmation: string;
 }
-const initialValues: joinProps = {
+const initialValues: IJoin = {
   email: "",
   nickName: "",
   password: "",
   passwordConfirmation: "",
 };
 
+type IJoinStatus = {
+  email: boolean;
+  nickName: boolean;
+};
+
 function Join() {
+  // 상태. 체크완료한건지 아닌지. 했으면 true 로 해서 중복검사 제외하기.
+  const [joinStatus, setJoinStatus] = useState<IJoinStatus>({
+    email: false,
+    nickName: false,
+  });
   const router = useRouter();
   const validationObj = useMemo(() => {
     return {
@@ -107,31 +117,85 @@ function Join() {
         .required("필수 정보입니다."),
       nickName: Yup.string().required("필수 정보입니다."),
       password: Yup.string()
-        .min(7, "7글자 이상 입력해주세요")
-        .max(10, "10글자 이하로 입력해주세요")
+        // .min(7, "7글자 이상 입력해주세요")
+        // .max(10, "10글자 이하로 입력해주세요")
         .required("필수 정보입니다."),
       passwordConfirmation: Yup.string()
-        .min(7, "7글자 이상 입력해주세요")
-        .max(10, "10글자 이하로 입력해주세요")
+        // .min(7, "7글자 이상 입력해주세요")
+        // .max(10, "10글자 이하로 입력해주세요")
         .required("필수 정보입니다.")
         .oneOf([Yup.ref("password"), ""], "비밀번호가 서로 일치하지 않습니다."),
     };
   }, []);
 
-  const postJoin = useCallback(async (values: joinProps) => {
-    const bodyObject = {
-      email: values.email,
-      nickName: values.nickName,
-      password: values.password,
-    };
+  const checkDuplicate = useCallback(
+    async ({
+      type,
+      value,
+      setFieldError,
+    }: {
+      type: string;
+      value: string;
+      setFieldError: any;
+    }) => {
+      if (value !== "") {
+        try {
+          const response = await axios.post("/user/duplicate", {
+            type,
+            value,
+          });
+          console.log("checkDuplicate res", response.data);
 
-    try {
-      await axios.post("/user", bodyObject);
-      // Swal.fire().then(res => )
-    } catch (error) {
-      console.log("error", error);
-    }
-  }, []);
+          if (response.data.isDuplicate) {
+            setFieldError(type, "중복입니다. 다른 정보를 기입해주세요.", true);
+            setJoinStatus((prev) => ({ ...prev, [type]: false }));
+            return;
+          } else setJoinStatus((prev) => ({ ...prev, [type]: true }));
+        } catch (error) {
+          console.log("checkDuplicate error: ", error);
+          return;
+        }
+      } else alert("값을 입력한 후 사용해주세요");
+    },
+    [joinStatus],
+  );
+
+  const postJoin = useCallback(
+    async (values: IJoin) => {
+      const bodyObject = {
+        email: values.email,
+        nickName: values.nickName,
+        password: values.password,
+      };
+      console.log("status", joinStatus.email, joinStatus.nickName);
+      if (joinStatus.email && joinStatus.nickName) {
+        try {
+          await axios.post("/user", bodyObject).then((res) => {
+            Swal.fire({
+              text: "회원가입이 완료되었습니다.",
+              showCancelButton: false,
+              confirmButtonText: "확인",
+              confirmButtonColor: "#ade9ef",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                router.push("/");
+              }
+            });
+          });
+        } catch (error) {
+          console.log("postJoin error", error);
+          Swal.fire({
+            text: "회원가입에 에러가 발생했습니다.",
+            showCancelButton: false,
+            confirmButtonText: "확인",
+            confirmButtonColor: "#ade9ef",
+          });
+        }
+      } else alert("중복확인을 해주세요.");
+    },
+    [joinStatus],
+  );
+
   return (
     <Container>
       <MainWrapper>
@@ -140,6 +204,7 @@ function Join() {
           initialValues={initialValues}
           validationSchema={Yup.object(validationObj)}
           validateOnChange={false}
+          validateOnBlur={true}
           onSubmit={async (values, actions) => {
             await postJoin(values);
           }}
@@ -154,8 +219,24 @@ function Join() {
                       className="input-btn-area"
                       style={{ position: "relative" }}
                     >
-                      <Field name="email" as={Input} />
+                      <Field name="email" as={InputWithButton} />
+                      <InputSideButton
+                        onClick={() =>
+                          checkDuplicate({
+                            type: "email",
+                            value: props.values.email,
+                            setFieldError: props.setFieldError,
+                          })
+                        }
+                      >
+                        중복확인
+                      </InputSideButton>
                     </div>
+                    {joinStatus.email && (
+                      <div style={{ marginTop: "0.25rem", color: "green" }}>
+                        <span>사용 가능한 계정입니다.</span>
+                      </div>
+                    )}
                     <ErrorMessage
                       name="email"
                       render={(msg) => (
@@ -171,8 +252,24 @@ function Join() {
                       className="input-btn-area"
                       style={{ position: "relative" }}
                     >
-                      <Field name="nickName" as={Input} />
+                      <Field name="nickName" as={InputWithButton} />
+                      <InputSideButton
+                        onClick={() =>
+                          checkDuplicate({
+                            type: "nickName",
+                            value: props.values.nickName,
+                            setFieldError: props.setFieldError,
+                          })
+                        }
+                      >
+                        중복확인
+                      </InputSideButton>
                     </div>
+                    {joinStatus.nickName && (
+                      <div style={{ marginTop: "0.25rem", color: "green" }}>
+                        <span>사용 가능한 닉네임입니다.</span>
+                      </div>
+                    )}
                     <ErrorMessage
                       name="nickName"
                       render={(msg) => (
@@ -188,7 +285,7 @@ function Join() {
                       className="input-btn-area"
                       style={{ position: "relative" }}
                     >
-                      <Field name="password" as={Input} />
+                      <Field type="password" name="password" as={Input} />
                     </div>
                     <ErrorMessage
                       name="password"
@@ -205,7 +302,11 @@ function Join() {
                       className="input-btn-area"
                       style={{ position: "relative" }}
                     >
-                      <Field name="passwordConfirmation" as={Input} />
+                      <Field
+                        type="password"
+                        name="passwordConfirmation"
+                        as={Input}
+                      />
                     </div>
                     <ErrorMessage
                       name="passwordConfirmation"

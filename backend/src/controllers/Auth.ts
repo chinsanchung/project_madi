@@ -1,15 +1,16 @@
-import UserModel from "@src/models/User";
 import { Request, Response, NextFunction } from "express";
+import { Types } from "mongoose";
+import UserModel from "@src/models/User";
 import Log from "@src/utils/logger";
 import JwtService from "@src/core/Jwt";
 import { tokenSet } from "./../constants/index";
 
 const jwtService = new JwtService();
 
-interface isValidProp {
+interface IIsValid {
   success: boolean;
   data: {
-    email: string;
+    _id: Types.ObjectId;
     updatedAt: number;
   };
 }
@@ -18,20 +19,20 @@ export default class AuthController {
   async postLogin(req: Request, res: Response, next: NextFunction) {
     Log.message(req.body);
     try {
-      const user = await UserModel.findOne({ email: req.body.email });
+      const user: any = await UserModel.findOne({ email: req.body.email });
       if (!user) {
-        res.sendStatus(404);
+        res.status(403).send("해당하는 유저가 없습니다.");
         res.end();
       } else if (user.password !== req.body.password) {
-        res.sendStatus(403);
+        res.status(403).send("비밀번호가 일치하지 않습니다.");
         res.end();
       }
       const accessToken = jwtService.getAccessToken({
-        email: user.email,
+        _id: user._id,
         updatedAt: user.updatedAt,
       });
       const refreshToken = jwtService.getRefreshToken({
-        email: user.email,
+        _id: user._id,
         updatedAt: user.updatedAt,
       });
 
@@ -54,15 +55,15 @@ export default class AuthController {
 
     if (!accessToken || !refreshToken) {
       // 서버는 요청받은 리소스를 찾을 수 없습니다.
-      res.sendStatus(404);
+      res.status(403).send("토큰이 존재하지 않습니다.");
       res.end();
     }
     const isValid = await jwtService.validateToken(accessToken);
-    const { success, data } = isValid as isValidProp;
+    const { success, data } = isValid as IIsValid;
     Log.message(`isValid: ${isValid.success}, ${isValid.data}`);
     if (success) {
       const accessToken = jwtService.getAccessToken({
-        email: data.email,
+        _id: data._id,
         updatedAt: data.updatedAt,
       });
 
@@ -70,7 +71,7 @@ export default class AuthController {
       res.end();
     } else {
       // 클라이언트는 콘텐츠에 접근할 권리를 가지고 있지 않습니다.
-      res.sendStatus(403);
+      res.status(403).send("토큰이 유효하지 않습니다.");
       res.end();
     }
   }
@@ -79,22 +80,22 @@ export default class AuthController {
     const refreshToken = req.cookies[tokenSet.refreshTokenName];
     if (!refreshToken) {
       // 서버는 요청받은 리소스를 찾을 수 없습니다.
-      res.sendStatus(404);
+      res.status(403).send("토큰이 존재하지 않습니다.");
       res.end();
     }
     const isValid = await jwtService.validateToken(refreshToken);
     Log.message(`isValid: ${isValid.success}, ${isValid.data}`);
-    const { success, data } = isValid as isValidProp;
+    const { success, data } = isValid as IIsValid;
     if (success) {
       const accessToken = jwtService.getAccessToken({
-        email: data.email,
+        _id: data._id,
         updatedAt: data.updatedAt,
       });
       res.send(accessToken);
       res.end();
     } else {
       // 클라이언트는 콘텐츠에 접근할 권리를 가지고 있지 않습니다.
-      res.sendStatus(403);
+      res.status(403).send("토큰이 유효하지 않습니다.");
       res.end();
     }
   }
@@ -104,5 +105,16 @@ export default class AuthController {
     res.clearCookie(tokenSet.refreshTokenName);
     res.send("success");
     res.end();
+  }
+
+  decodeToken(req: Request, res: Response, next: NextFunction) {
+    Log.message("start decodeToken");
+    const accessToken = req.headers.authorization;
+    Log.message(accessToken);
+    const decoded = jwtService.decodeToken(accessToken);
+
+    req.adminToken = decoded;
+
+    next();
   }
 }

@@ -125,7 +125,7 @@ function Login() {
                     )}
                   />
                   <Label htmlFor="password">비밀번호</Label>
-                  <Field type="text" name="password" as={Input} />
+                  <Field type="password" name="password" as={Input} />
                   <ErrorMessage
                     name="password"
                     render={(msg) => (
