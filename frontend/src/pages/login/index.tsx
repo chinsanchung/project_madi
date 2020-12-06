@@ -70,7 +70,7 @@ interface loginProps {
   email: string;
   password: string;
 }
-const initialValue: loginProps = { email: "", password: "" };
+const initialValue: loginProps = { email: "second@g.com", password: "123" };
 
 function Login() {
   const router = useRouter();
@@ -85,7 +85,7 @@ function Login() {
 
   const postLogin = useCallback(async (values: loginProps) => {
     try {
-      const response = await axios.post("/auth/login", values, {
+      const response = await axios.post("/api/auth/login", values, {
         withCredentials: true,
       });
       console.log("response", response.data);

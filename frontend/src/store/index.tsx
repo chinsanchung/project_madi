@@ -24,7 +24,7 @@ type TDispatch = Dispatch<TAction>;
 const StateContext = createContext<IState | null>(null);
 const DispatchContext = createContext<TDispatch | null>(null);
 
-function reducer(state: IState, action: TAction): IState {
+const reducer = (state: IState, action: TAction): IState => {
   switch (action.type) {
     case "LOGIN": {
       return { ...state, isLogin: true };
@@ -40,7 +40,7 @@ function reducer(state: IState, action: TAction): IState {
       return state;
     }
   }
-}
+};
 
 export const Provider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, {
@@ -50,7 +50,8 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
 
   const getAccessToken = useCallback(async () => {
     try {
-      const response = await axios.post("/auth/refresh");
+      // const response = await axios.post("/api/auth/refresh");
+      const response = await axios.post("/api/auth/token");
       console.log("getAccessToken: ", response.data);
       axios.defaults.headers.common["Authorization"] = response.data;
     } catch (error) {
@@ -65,9 +66,9 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
     console.log("hey refresh-token! :", typeof token);
     console.log("hey access-token! :", typeof authorization);
 
-    let baseUrl = "http://localhost:5000/api";
+    // let baseUrl = "http://localhost:5000";
+    // axios.defaults.baseURL = baseUrl;
     axios.defaults.withCredentials = true;
-    axios.defaults.baseURL = baseUrl;
 
     if (token !== undefined && authorization === undefined) {
       dispatch({ type: "LOGIN" });

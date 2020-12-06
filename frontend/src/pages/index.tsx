@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import cookie from "react-cookies";
 import styled from "styled-components";
@@ -19,7 +19,7 @@ function MainPage() {
     const token = cookie.load("rNADACI4MAoJb5C");
     if (token) {
       try {
-        const response = await axios.get("/auth/valid", {
+        const response = await axios.get("api/auth/valid", {
           withCredentials: true,
         });
         console.log("resp", response.data);

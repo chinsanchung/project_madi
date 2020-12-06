@@ -57,7 +57,7 @@ function Header() {
   }, []);
   const onLogOut = useCallback(async () => {
     try {
-      await axios.delete("/auth/token", {
+      await axios.delete("/api/auth/token", {
         withCredentials: true,
       });
       dispatch({ type: "LOGOUT" });

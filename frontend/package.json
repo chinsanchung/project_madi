@@ -7,14 +7,20 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "@types/jest": "^26.0.15",
-    "@types/node": "^12.0.0",
+    "@types/jsonwebtoken": "^8.5.0",
+    "@types/node": "^14.14.10",
     "@types/react": "^16.9.53",
     "@types/react-cookies": "^0.1.0",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.6",
     "@types/styled-components": "^5.1.4",
     "axios": "^0.21.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^8.2.0",
     "formik": "^2.2.5",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.4",
     "next": "^10.0.3",
     "react": "^17.0.1",
     "react-cookies": "^0.1.1",
@@ -27,8 +33,10 @@
     "yup": "^0.31.0"
   },
   "scripts": {
-    "start": "webpack-dev-server --config ./tools/webpack.config.dev.js",
-    "dev": "next dev"
+    "server": "cross-env NODE_ENV=development node server.js",
+    "start": "cross-env NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js ./dist/index.js",
+    "dev": "next",
+    "build": "next build"
   },
   "eslintConfig": {
     "extends": [
