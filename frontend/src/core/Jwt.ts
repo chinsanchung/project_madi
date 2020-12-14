@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import database from "./database";
 
 interface IToken {
-  _id: Types.ObjectId;
+  _id: string;
   updatedAt: number;
 }
 

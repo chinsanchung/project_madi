@@ -9,7 +9,7 @@ const jwtService = new JwtService();
 interface IIsValid {
   success: boolean;
   data: {
-    _id: Types.ObjectId;
+    _id: string;
     updatedAt: number;
   };
 }
