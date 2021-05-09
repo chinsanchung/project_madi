@@ -21,10 +21,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-.next
-*.log
-yarn.lock
-package-lock.json
-
-.env
