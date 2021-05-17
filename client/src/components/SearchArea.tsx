@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 
 const BarDiv = styled.div`
   position: relative;
@@ -51,6 +52,7 @@ interface IKeyword {
 }
 
 function SearchArea() {
+  const history = useHistory();
   const [keyword, setKeyword] = useState("");
   const [keywordList, setKeywordList] = useState<String[]>([]);
   const [autoComplete, setAutoComplete] = useState<IKeyword[]>([]);
@@ -59,7 +61,7 @@ function SearchArea() {
     try {
       console.log("start autocomplete");
       const response = await axios.get(`/search?keyword=${keyword}`);
-      console.log("결과: ", response.data);
+      // console.log("결과: ", response.data);
       const { result } = response.data;
       if (result) setAutoComplete(response.data.result);
     } catch (error) {
@@ -78,22 +80,23 @@ function SearchArea() {
     if (keyword.length > 0) {
       getDataFromKeyword();
     }
-  }, [keyword]);
-  const onEnterEvent = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      // if (keywordList.length < 6) {
-      //   setKeywordList((prev) => [...prev, keyword]);
-      //   setKeyword("");
-      // }
-    },
-    [keyword]
-  );
-  const onClickAutoComplete = useCallback((val: IKeyword) => {
-    // setAutoComplete([]);
-    // setKeywordList((prev) => [...prev, val]);
-    // setKeyword("");
+  }, [getDataFromKeyword, keyword]);
+  const onEnterEvent = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // if (keywordList.length < 6) {
+    //   setKeywordList((prev) => [...prev, keyword]);
+    //   setKeyword("");
+    // }
   }, []);
+  const onClickAutoComplete = useCallback(
+    (val: IKeyword) => {
+      history.push(`/list?keyword=${val?.name}`);
+      // setAutoComplete([]);
+      // setKeywordList((prev) => [...prev, val]);
+      // setKeyword("");
+    },
+    [history]
+  );
   const onRemoveKeyword = useCallback((val: String) => {
     setKeywordList((prev) => prev.filter((item) => item !== val));
   }, []);

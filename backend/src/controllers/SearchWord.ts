@@ -8,7 +8,7 @@ const searchAndGetWords = async (req: Request, res: Response) => {
     const { keyword }: { keyword: string } = (req.query as unknown) as {
       keyword: string;
     };
-    Log.message("겸색어", keyword);
+    // Log.message("겸색어", keyword);
     const regex = new RegExp(keyword);
     const response = await Model.find({ name: regex }).lean();
     // Log.message("결과", response);
