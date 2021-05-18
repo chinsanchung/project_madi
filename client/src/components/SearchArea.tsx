@@ -28,10 +28,10 @@ const ListUl = styled.ul`
   border: 1px solid #e2e2e2;
   margin: 1px auto 0 auto;
   box-sizing: border-box;
-  padding: 0 5px;
+  padding: 0;
   list-style: none;
 `;
-const AutoCompleteButton = styled.button`
+const SearchItem = styled.button`
   display: block;
   width: 100%;
   max-width: 300px;
@@ -39,11 +39,15 @@ const AutoCompleteButton = styled.button`
   margin: 0 auto;
   text-align: left;
   box-sizing: border-box;
-  padding: 5px;
+  padding: 0 5px;
   border: none;
   outline: 0;
   background-color: #fff;
   cursor: pointer;
+
+  &:hover {
+    background-color: #e2e2e2;
+  }
 `;
 
 interface IKeyword {
@@ -54,12 +58,12 @@ interface IKeyword {
 function SearchArea() {
   const history = useHistory();
   const [keyword, setKeyword] = useState("");
-  const [keywordList, setKeywordList] = useState<String[]>([]);
+  // const [keywordList, setKeywordList] = useState<String[]>([]);
   const [autoComplete, setAutoComplete] = useState<IKeyword[]>([]);
 
   const getDataFromKeyword = useCallback(async () => {
     try {
-      console.log("start autocomplete");
+      // console.log("start autocomplete");
       const response = await axios.get(`/search?keyword=${keyword}`);
       // console.log("결과: ", response.data);
       const { result } = response.data;
@@ -97,9 +101,9 @@ function SearchArea() {
     },
     [history]
   );
-  const onRemoveKeyword = useCallback((val: String) => {
-    setKeywordList((prev) => prev.filter((item) => item !== val));
-  }, []);
+  // const onRemoveKeyword = useCallback((val: String) => {
+  //   setKeywordList((prev) => prev.filter((item) => item !== val));
+  // }, []);
 
   return (
     <BarDiv>
@@ -113,9 +117,9 @@ function SearchArea() {
       <ListUl>
         {autoComplete.map((val, idx) => (
           <li key={"auto" + idx}>
-            <AutoCompleteButton onClick={() => onClickAutoComplete(val)}>
+            <SearchItem onClick={() => onClickAutoComplete(val)}>
               {val?.name}
-            </AutoCompleteButton>
+            </SearchItem>
           </li>
         ))}
       </ListUl>

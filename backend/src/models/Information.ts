@@ -13,7 +13,7 @@ interface InformationProp extends Document {
 
 const schema = new Schema(
   {
-    name: String,
+    recipe_id: String,
     title: String,
     description: String,
     nation: String,
